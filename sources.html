@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sources — UK Reality Check</title>
+<meta name="description" content="Every data source used in our national dashboards, listed by domain. All publicly available. All linked.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F7F5F0;
+    --bg-warm: #EFECE4;
+    --surface: #FFFFFF;
+    --text: #1a1c20;
+    --text-secondary: #4a4d55;
+    --text-tertiary: #6e7179;
+    --border: #d8d5cd;
+    --border-light: #e8e5dd;
+    --accent: #2c5ea0;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+  body { font-family: var(--sans); font-weight: 400; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  nav { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  .site-name { font-family: var(--serif); font-size: 1.15rem; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 1.25rem; list-style: none; font-size: 0.85rem; }
+  .nav-links a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links .active { color: var(--text); font-weight: 500; }
+  .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); padding: 0.25rem; }
+
+  .page-header { padding: 2.5rem 1.25rem 1.5rem; max-width: 720px; }
+  .page-header h1 { font-family: var(--serif); font-weight: 400; font-size: 2.2rem; line-height: 1.15; margin-bottom: 0.75rem; }
+  .page-header .lead { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.65; max-width: 580px; }
+
+  .content { padding: 0 1.25rem 3rem; max-width: 860px; }
+
+  .domain-section { margin-bottom: 2rem; }
+  .domain-section:last-of-type { margin-bottom: 0; }
+
+  .domain-header {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.3rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .domain-intro {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+    line-height: 1.55;
+  }
+
+  .source-list { list-style: none; }
+
+  .source-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-light);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .source-item:last-child { border-bottom: none; }
+
+  .source-name a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(44,94,160,0.25);
+    transition: border-color 0.2s;
+  }
+
+  .source-name a:hover { border-color: var(--accent); }
+
+  .source-detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .source-meta {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.03em;
+  }
+
+  .cross-cutting {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .note-box {
+    background: var(--bg-warm);
+    padding: 1.25rem;
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .note-box strong { color: var(--text); font-weight: 500; }
+
+  footer { border-top: 1px solid var(--border); padding: 2rem 1.25rem 3rem; }
+  .footer-nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .footer-nav a { font-size: 0.8rem; color: var(--text-secondary); text-decoration: none; }
+  .footer-nav a:hover { color: var(--text); }
+  .footer-fine { font-size: 0.7rem; color: var(--text-tertiary); line-height: 1.6; margin-top: 1.5rem; }
+  .footer-fine a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 599px) {
+    .menu-toggle { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); flex-direction: column; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); gap: 0.75rem; }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1rem; padding: 0.25rem 0; }
+    .page-header { padding: 1.5rem 1rem 1rem; }
+    .page-header h1 { font-size: 1.8rem; }
+    .content { padding: 0 1rem 2rem; }
+    footer { padding: 1.5rem 1rem 2rem; }
+  }
+
+  @media (min-width: 600px) {
+    nav { padding: 1rem 2rem; }
+    .page-header { padding: 3rem 2rem 1.5rem; }
+    .content { padding: 0 2rem 3rem; }
+    .source-item { grid-template-columns: 1fr auto; gap: 0.5rem; align-items: baseline; }
+    footer { padding: 2rem 2rem 3rem; }
+  }
+
+  @media (min-width: 900px) {
+    nav { padding: 1rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .page-header { padding: 4rem 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .page-header h1 { font-size: 2.8rem; }
+    .content { padding: 0 3rem 3rem; max-width: 1100px; margin: 0 auto; }
+    footer { padding: 2rem 3rem 3rem; max-width: 1100px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="site-name">UK Reality Check</a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">☰</button>
+  <ul class="nav-links">
+    <li><a href="/uk/">UK</a></li>
+    <li><a href="/us/">US</a></li>
+    <li><a href="/compare/">Compare</a></li>
+    <li><a href="/methodology/">Methodology</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <h1>Sources</h1>
+  <p class="lead">Every data source used in the dashboards, listed by domain. All publicly available. All linked. If a link breaks or a dataset is superseded, please let us know.</p>
+</header>
+
+<div class="content">
+
+  <div class="domain-section">
+    <h2 class="domain-header">Health (NHS)</h2>
+    <p class="domain-intro">Waiting list volumes, referral-to-treatment performance, A&E targets, and treatment throughput.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/" target="_blank">NHS England — Consultant-Led Referral to Treatment Waiting Times</a></div>
+          <div class="source-detail">Monthly statistical series. The primary source for waiting list size and 18-week RTT performance.</div>
+        </div>
+        <div class="source-meta">Monthly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/nhs-backlog-data-analysis" target="_blank">BMA — NHS Backlog Data Analysis</a></div>
+          <div class="source-detail">Analysis of waiting list trends, treatment volumes, and workforce pressures. Useful for contextualising the raw NHS England figures.</div>
+        </div>
+        <div class="source-meta">Regularly updated</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://commonslibrary.parliament.uk/research-briefings/cbp-7281/" target="_blank">House of Commons Library — NHS Key Statistics: England (CBP-7281)</a></div>
+          <div class="source-detail">Comprehensive briefing covering waiting times, workforce, funding, and performance against key targets.</div>
+        </div>
+        <div class="source-meta">Periodically updated</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.health.org.uk/" target="_blank">Health Foundation</a></div>
+          <div class="source-detail">Independent analysis of NHS performance and health policy, including waiting times assessments and government progress tracking.</div>
+        </div>
+        <div class="source-meta">Various publications</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Living Standards</h2>
+    <p class="domain-intro">Real wages, nominal earnings growth, and the impact of inflation on purchasing power.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/averageweeklyearningsearn01" target="_blank">ONS — EARN01: Average Weekly Earnings</a></div>
+          <div class="source-detail">Seasonally adjusted average weekly earnings by sector. The main time series for tracking nominal wage growth.</div>
+        </div>
+        <div class="source-meta">Monthly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/averageweeklyearnings" target="_blank">ONS — Average Weekly Earnings Time Series</a></div>
+          <div class="source-detail">Extended time series data. Used in conjunction with CPIH (series L522) for real-terms wage calculations.</div>
+        </div>
+        <div class="source-meta">Monthly</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Safety</h2>
+    <p class="domain-intro">Overall crime rates, police recorded crime, homicide trends, and fraud.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/bulletins/crimeinenglandandwales/latest" target="_blank">ONS — Crime in England and Wales</a></div>
+          <div class="source-detail">The Crime Survey for England and Wales (CSEW) annual bulletin. The most comprehensive measure of crime trends, combining survey data with police recorded figures.</div>
+        </div>
+        <div class="source-meta">Annual</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice" target="_blank">ONS — Crime and Justice Portal</a></div>
+          <div class="source-detail">Hub for all ONS crime and justice datasets including police recorded crime, fraud, and homicide statistics.</div>
+        </div>
+        <div class="source-meta">Various schedules</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Housing</h2>
+    <p class="domain-intro">Affordability ratios, house prices, rental costs, and housing supply.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/ratioofhousepricetoworkplacebasedearningslowerquartileandmedian" target="_blank">ONS — House Price to Workplace-Based Earnings Ratio</a></div>
+          <div class="source-detail">Median and lower-quartile affordability ratios. The core measure of whether housing is becoming more or less affordable relative to local wages.</div>
+        </div>
+        <div class="source-meta">Annual</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/housepriceindex/latest" target="_blank">ONS — UK House Price Index</a></div>
+          <div class="source-detail">Monthly house price data based on HM Land Registry records. Used for tracking price trends and regional variation.</div>
+        </div>
+        <div class="source-meta">Monthly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://commonslibrary.parliament.uk/research-briefings/cbp-9040/" target="_blank">House of Commons Library — Economic Indicators (CBP-9040)</a></div>
+          <div class="source-detail">Broader economic context including housing starts, completions, and construction sector data.</div>
+        </div>
+        <div class="source-meta">Periodically updated</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Education</h2>
+    <p class="domain-intro">Attainment at key stages, disadvantage gaps, and regional disparities.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://explore-education-statistics.service.gov.uk/" target="_blank">DfE — Explore Education Statistics</a></div>
+          <div class="source-detail">The Department for Education's data platform. Primary source for KS2 and KS4 attainment, school-level performance, and pupil characteristics.</div>
+        </div>
+        <div class="source-meta">Annual</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.instituteforgovernment.org.uk/publication/performance-tracker-2025/summary" target="_blank">IfG — Performance Tracker 2025: Schools</a></div>
+          <div class="source-detail">Assessment of school system performance including attainment, teacher recruitment, and funding trends.</div>
+        </div>
+        <div class="source-meta">Annual (November)</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://epi.org.uk/publications-and-research/" target="_blank">Education Policy Institute — Publications</a></div>
+          <div class="source-detail">Independent research on education policy, particularly the disadvantage attainment gap and regional variation.</div>
+        </div>
+        <div class="source-meta">Various publications</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Public Services</h2>
+    <p class="domain-intro">Composite assessment across courts, prisons, social care, local government, and police.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.instituteforgovernment.org.uk/publication/performance-tracker-2025/summary" target="_blank">IfG/Nuffield Foundation — Performance Tracker 2025: Summary</a></div>
+          <div class="source-detail">The most recent cross-service assessment. Covers hospitals, GP, adult social care, children's social care, schools, police, criminal courts, prisons, and homelessness services.</div>
+        </div>
+        <div class="source-meta">November 2025</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.instituteforgovernment.org.uk/publication/performance-tracker-2023" target="_blank">IfG/CIPFA — Performance Tracker 2023</a></div>
+          <div class="source-detail">Previous edition. Useful for tracking year-on-year change in service quality assessments.</div>
+        </div>
+        <div class="source-meta">January 2024</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.instituteforgovernment.org.uk/our-work/trackers/public-services-performance-tracker" target="_blank">IfG — Performance Tracker Series</a></div>
+          <div class="source-detail">Landing page for the full annual series, published since 2017. The primary external source for our public services composite assessment.</div>
+        </div>
+        <div class="source-meta">Annual since 2017</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Employment</h2>
+    <p class="domain-intro">Employment rate, economic inactivity, vacancies, and labour market composition.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes" target="_blank">ONS — Labour Force Survey / Labour Market Overview</a></div>
+          <div class="source-detail">The primary source for employment rate, unemployment, and economic inactivity. Includes breakdowns by age, region, and reason for inactivity.</div>
+        </div>
+        <div class="source-meta">Monthly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://commonslibrary.parliament.uk/research-briefings/cbp-9040/" target="_blank">House of Commons Library — Economic Indicators (CBP-9040)</a></div>
+          <div class="source-detail">Broader economic context including PAYE Real Time Information estimates and vacancy data.</div>
+        </div>
+        <div class="source-meta">Periodically updated</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Wellbeing</h2>
+    <p class="domain-intro">Self-reported health, life satisfaction, anxiety, and healthy life expectancy.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/wellbeing" target="_blank">ONS — UK Measures of National Well-being</a></div>
+          <div class="source-detail">Quarterly headline well-being measures including life satisfaction, feeling things in life are worthwhile, happiness, and anxiety.</div>
+        </div>
+        <div class="source-meta">Quarterly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies" target="_blank">ONS — Health and Life Expectancies</a></div>
+          <div class="source-detail">Healthy life expectancy and disability-free life expectancy data. Key indicator of whether longer lives are also healthier lives.</div>
+        </div>
+        <div class="source-meta">Annual</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="domain-section">
+    <h2 class="domain-header">Economy</h2>
+    <p class="domain-intro">GDP per head, productivity, and quarterly growth — not aggregate GDP.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ihxw/pn2" target="_blank">ONS — GDP per Head Time Series (IHXW)</a></div>
+          <div class="source-detail">Real GDP per capita. We use this rather than headline GDP because aggregate growth without population adjustment overstates the lived experience of economic progress.</div>
+        </div>
+        <div class="source-meta">Quarterly</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/economy/grossdomesticproductgdp" target="_blank">ONS — Gross Domestic Product Portal</a></div>
+          <div class="source-detail">Hub for all ONS GDP datasets including first quarterly estimates, quarterly national accounts, and sector breakdowns.</div>
+        </div>
+        <div class="source-meta">Quarterly</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="cross-cutting">
+    <h2 class="domain-header">Cross-Cutting Sources</h2>
+    <p class="domain-intro">Sources that inform multiple domains or the overall editorial framing.</p>
+    <ul class="source-list">
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.instituteforgovernment.org.uk/" target="_blank">Institute for Government</a></div>
+          <div class="source-detail">Independent think tank. Their Performance Tracker is the backbone of our public services assessment, and their broader policy analysis informs several other domains.</div>
+        </div>
+        <div class="source-meta">ifg.org.uk</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://www.ons.gov.uk/" target="_blank">Office for National Statistics</a></div>
+          <div class="source-detail">The UK's national statistical institute. Primary data source for six of our nine domains.</div>
+        </div>
+        <div class="source-meta">ons.gov.uk</div>
+      </li>
+      <li class="source-item">
+        <div>
+          <div class="source-name"><a href="https://commonslibrary.parliament.uk/" target="_blank">House of Commons Library</a></div>
+          <div class="source-detail">Parliament's in-house research service. Their briefing papers synthesise data from multiple official sources into accessible analysis.</div>
+        </div>
+        <div class="source-meta">commonslibrary.parliament.uk</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="note-box">
+    <p><strong>A note on data freshness.</strong> We link to landing pages and series portals rather than individual releases wherever possible, so the links remain valid as new data is published. Where a specific bulletin or edition is referenced (e.g. "Performance Tracker 2025"), we link directly to that publication. If you find a broken link, the underlying data is almost certainly still available — ONS, NHS England, and the IfG rarely remove data; they restructure their websites. Try searching the organisation's site directly.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-nav">
+    <a href="/uk/">UK Dashboard</a>
+    <a href="/uk/timeline/">UK Timeline</a>
+    <a href="/methodology/">Methodology</a>
+    <a href="/about/">About</a>
+  </div>
+  <div class="footer-fine">
+    <p>UK Reality Check is built and maintained by <a href="/about/">James Webb</a>. All sources are publicly available government or institutional data.</p>
+  </div>
+</footer>
+
+</body>
+</html>

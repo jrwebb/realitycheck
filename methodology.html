@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology — UK Reality Check</title>
+<meta name="description" content="How we assess whether a country is getting better or worse. Our data sources, scoring approach, editorial judgments, and limitations — explained transparently.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #F7F5F0;
+    --bg-warm: #EFECE4;
+    --surface: #FFFFFF;
+    --text: #1a1c20;
+    --text-secondary: #4a4d55;
+    --text-tertiary: #6e7179;
+    --border: #d8d5cd;
+    --border-light: #e8e5dd;
+    --accent: #2c5ea0;
+    --accent-hover: #1d4b85;
+    --improving: #1a7a4a;
+    --improving-bg: #e8f5ee;
+    --stagnating: #8a6d1b;
+    --stagnating-bg: #fdf5e0;
+    --declining: #b83230;
+    --declining-bg: #fce8e8;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+  body { font-family: var(--sans); font-weight: 400; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* NAV */
+  nav { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  .site-name { font-family: var(--serif); font-size: 1.15rem; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 1.25rem; list-style: none; font-size: 0.85rem; }
+  .nav-links a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links .active { color: var(--text); font-weight: 500; }
+  .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); padding: 0.25rem; }
+
+  /* CONTENT */
+  .page-header {
+    padding: 2.5rem 1.25rem 1.5rem;
+    max-width: 720px;
+  }
+
+  .page-header h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 2.2rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header .lead {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 580px;
+  }
+
+  .content {
+    padding: 0 1.25rem 3rem;
+    max-width: 720px;
+  }
+
+  .content h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin: 2.5rem 0 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .content h2:first-of-type {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 1.5rem;
+  }
+
+  .content h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.15rem;
+    margin: 1.75rem 0 0.5rem;
+  }
+
+  .content p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  .content p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .content a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(44,94,160,0.25);
+    transition: border-color 0.2s;
+  }
+
+  .content a:hover { border-color: var(--accent); }
+
+  /* DOMAIN TABLE */
+  .domain-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+
+  .domain-table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--border);
+    font-weight: 400;
+  }
+
+  .domain-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .domain-table td:first-child {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--text);
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  /* STATUS EXPLAINER */
+  .status-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .status-card {
+    flex: 1;
+    min-width: 180px;
+    padding: 1rem;
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+  }
+
+  .status-card h4 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .status-card.improving h4 { color: var(--improving); }
+  .status-card.stagnating h4 { color: var(--stagnating); }
+  .status-card.declining h4 { color: var(--declining); }
+
+  .status-card p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+  }
+
+  /* SCORE SCALE */
+  .score-scale {
+    display: flex;
+    align-items: stretch;
+    margin: 1.25rem 0;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+    font-size: 0.75rem;
+  }
+
+  .score-band {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .score-band .range {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: var(--bg-warm);
+    border-left: 3px solid var(--accent);
+    padding: 1.25rem 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  .callout p {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0;
+    line-height: 1.65;
+  }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 2rem 1.25rem 3rem; }
+  .footer-nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .footer-nav a { font-size: 0.8rem; color: var(--text-secondary); text-decoration: none; }
+  .footer-nav a:hover { color: var(--text); }
+  .footer-fine { font-size: 0.7rem; color: var(--text-tertiary); line-height: 1.6; margin-top: 1.5rem; }
+  .footer-fine a { color: var(--accent); text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 599px) {
+    .menu-toggle { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); flex-direction: column; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); gap: 0.75rem; }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1rem; padding: 0.25rem 0; }
+
+    .page-header { padding: 1.5rem 1rem 1rem; }
+    .page-header h1 { font-size: 1.8rem; }
+    .page-header .lead { font-size: 0.95rem; }
+
+    .content { padding: 0 1rem 2rem; }
+    .content h2 { font-size: 1.3rem; }
+    .content p { font-size: 0.9rem; }
+
+    .domain-table { font-size: 0.8rem; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .domain-table th, .domain-table td { padding: 0.6rem 0.75rem; }
+
+    .status-row { flex-direction: column; }
+
+    .score-scale { flex-direction: column; }
+    .score-band { padding: 0.6rem 0.75rem; text-align: left; display: flex; gap: 0.5rem; align-items: center; }
+    .score-band:not(:last-child) { border-bottom: 1px solid var(--border-light); }
+  }
+
+  @media (min-width: 600px) {
+    nav { padding: 1rem 2rem; }
+    .page-header { padding: 3rem 2rem 1.5rem; }
+    .content { padding: 0 2rem 3rem; }
+    footer { padding: 2rem 2rem 3rem; }
+  }
+
+  @media (min-width: 900px) {
+    nav { padding: 1rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .page-header { padding: 4rem 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .page-header h1 { font-size: 2.8rem; }
+    .content { padding: 0 3rem 3rem; max-width: 1100px; margin: 0 auto; }
+    footer { padding: 2rem 3rem 3rem; max-width: 1100px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="site-name">UK Reality Check</a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">☰</button>
+  <ul class="nav-links">
+    <li><a href="/uk/">UK</a></li>
+    <li><a href="/us/">US</a></li>
+    <li><a href="/compare/">Compare</a></li>
+    <li><a class="active" href="/methodology/">Methodology</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <h1>Methodology</h1>
+  <p class="lead">This site makes claims about whether countries are getting better or worse. Those claims should be scrutable. This page explains how the assessments are made, what data they draw on, where editorial judgment is involved, and what the limitations are.</p>
+</header>
+
+<div class="content">
+
+  <h2>What we're measuring</h2>
+
+  <p>We track nine domains of national life. These were chosen because they collectively cover what most people mean when they ask whether things are "getting better" — their health, their pay, their safety, whether they can afford a home, whether public services work, and whether the economy is delivering for ordinary people rather than just growing in aggregate.</p>
+
+  <p>The nine domains are not exhaustive. They don't cover the environment, immigration, democratic institutions, inequality, or cultural life, among other things. They represent a judgment about which areas have sufficiently robust, regularly published data to support meaningful trend assessment. We may expand the set over time.</p>
+
+  <table class="domain-table">
+    <thead>
+      <tr>
+        <th>Domain</th>
+        <th>What we track</th>
+        <th>Primary sources</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Health (NHS)</td>
+        <td>Waiting list size, 18-week RTT performance, A&E 4-hour target, treatment volumes</td>
+        <td><a href="https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/">NHS England</a>, <a href="https://www.bma.org.uk/advice-and-support/nhs-delivery-and-workforce/pressures/nhs-backlog-data-analysis">BMA</a>, <a href="https://commonslibrary.parliament.uk/research-briefings/cbp-7281/">Commons Library</a></td>
+      </tr>
+      <tr>
+        <td>Living Standards</td>
+        <td>Real average weekly earnings (CPIH-adjusted), nominal vs real wage growth</td>
+        <td><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/averageweeklyearningsearn01">ONS EARN01</a></td>
+      </tr>
+      <tr>
+        <td>Safety</td>
+        <td>CSEW total crime, police recorded crime, homicide rate, fraud trends</td>
+        <td><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/bulletins/crimeinenglandandwales/latest">ONS Crime Survey</a></td>
+      </tr>
+      <tr>
+        <td>Housing</td>
+        <td>House price to earnings ratio, housing starts, private rental index</td>
+        <td><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/ratioofhousepricetoworkplacebasedearningslowerquartileandmedian">ONS Affordability</a>, <a href="https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/housepriceindex/latest">ONS HPI</a></td>
+      </tr>
+      <tr>
+        <td>Education</td>
+        <td>KS2 and KS4 attainment, disadvantage gap, regional disparities</td>
+        <td><a href="https://explore-education-statistics.service.gov.uk/">DfE</a>, <a href="https://epi.org.uk/publications-and-research/">EPI</a>, <a href="https://www.instituteforgovernment.org.uk/publication/performance-tracker-2025/summary">IfG</a></td>
+      </tr>
+      <tr>
+        <td>Public Services</td>
+        <td>Composite assessment across courts, prisons, social care, local government, police</td>
+        <td><a href="https://www.instituteforgovernment.org.uk/our-work/trackers/public-services-performance-tracker">IfG Performance Tracker</a> (annual series)</td>
+      </tr>
+      <tr>
+        <td>Employment</td>
+        <td>Employment rate (16–64), economic inactivity, vacancies, PAYE data</td>
+        <td><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes">ONS Labour Market</a></td>
+      </tr>
+      <tr>
+        <td>Wellbeing</td>
+        <td>Self-reported health, life satisfaction, healthy life expectancy</td>
+        <td><a href="https://www.ons.gov.uk/peoplepopulationandcommunity/wellbeing">ONS Well-being</a>, <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies">ONS Life Expectancy</a></td>
+      </tr>
+      <tr>
+        <td>Economy</td>
+        <td>GDP per head (not aggregate GDP), productivity, quarterly growth</td>
+        <td><a href="https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ihxw/pn2">ONS GDP per head</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>How direction-of-travel assessments work</h2>
+
+  <p>Each domain is assigned a status: <strong>improving</strong>, <strong>stagnating</strong>, or <strong>declining</strong>. These are directional assessments, not absolute scores. A domain can be "improving" while still being in poor shape overall — it means the trend is moving in the right direction, not that the problem is solved.</p>
+
+  <div class="status-row">
+    <div class="status-card improving">
+      <h4>Improving</h4>
+      <p>The most recent data shows meaningful, sustained movement in a positive direction relative to the comparison period. Not just a single good quarter.</p>
+    </div>
+    <div class="status-card stagnating">
+      <h4>Stagnating</h4>
+      <p>No meaningful change, or gains and losses roughly cancelling out. May also apply when a metric has improved slightly but remains far below a reasonable baseline.</p>
+    </div>
+    <div class="status-card declining">
+      <h4>Declining</h4>
+      <p>The most recent data shows meaningful, sustained movement in a negative direction. Or: the metric has deteriorated so far from baseline that even modest improvement doesn't shift the assessment.</p>
+    </div>
+  </div>
+
+  <p>Assessments are made over three time windows: <strong>Past Year</strong> (roughly 12 months of the most recent data), <strong>5 Years</strong> (capturing pandemic impact and recovery), and <strong>Since 2015</strong> (a longer structural view spanning multiple governments). A domain can have different statuses across different windows — for example, NHS waiting lists are "stagnating" over the past year (modest falls) but "declining" since 2015 (the list tripled).</p>
+
+  <h2>How the radar chart scores work</h2>
+
+  <p>The radar chart maps each domain to a score from 0 to 100. This is the most interpretive element of the dashboard and the part most open to challenge.</p>
+
+  <div class="score-scale">
+    <div class="score-band" style="background:var(--declining-bg);color:var(--declining);"><span class="range">0–20</span> Crisis</div>
+    <div class="score-band" style="background:var(--declining-bg);color:var(--declining);opacity:0.7;"><span class="range">20–40</span> Poor</div>
+    <div class="score-band" style="background:var(--stagnating-bg);color:var(--stagnating);"><span class="range">40–60</span> Middling</div>
+    <div class="score-band" style="background:var(--improving-bg);color:var(--improving);opacity:0.7;"><span class="range">60–80</span> Good</div>
+    <div class="score-band" style="background:var(--improving-bg);color:var(--improving);"><span class="range">80–100</span> Strong</div>
+  </div>
+
+  <p>Scores are assigned editorially based on a composite assessment of: the absolute level of the metric relative to its historical range, the direction and pace of change, and the gap between current performance and a reasonable target or international benchmark where one exists. They are not algorithmically derived. Two people looking at the same data could assign different scores. The value of showing them is not precision — it's the overall shape. A country with most domains scoring 30–50 looks and feels different from one scoring 60–80, and that pattern is what the radar chart is designed to reveal.</p>
+
+  <h2>The composite indices</h2>
+
+  <h3>Public Services</h3>
+
+  <p>This is the domain that relies most heavily on a single external assessment: the <a href="https://www.instituteforgovernment.org.uk/our-work/trackers/public-services-performance-tracker">Institute for Government's Performance Tracker</a>, published annually since 2017 in partnership with the Nuffield Foundation (and previously CIPFA). The IfG assesses nine services individually — general practice, hospitals, adult social care, children's social care, schools, police, criminal courts, prisons, and homelessness services — using a mix of quantitative indicators and qualitative analysis.</p>
+
+  <p>Our composite status reflects the IfG's overall direction of travel across these services. We don't apply our own weighting to individual services. Where the IfG says "almost every service is performing worse than in 2010," that becomes a "declining" assessment.</p>
+
+  <h3>The Two-Track Chart (timeline only)</h3>
+
+  <p>The "Output recovered. Services didn't." chart in the timeline view plots two lines: GDP (real, from ONS) and a public services quality composite, both indexed to 2008 = 100. The GDP line uses official ONS data. The services line is an editorial construction: it translates the IfG's qualitative assessments across nine services into an index that approximates the trajectory of overall public service quality since 2008.</p>
+
+  <div class="callout">
+    <p><strong>This is the weakest methodological link in the whole project.</strong> The IfG does not publish a single composite score. Our index translates their narrative judgments into numbers, which necessarily involves interpretation.</p>
+
+    <p><strong>A concrete example:</strong> for 2023, the IfG's Performance Tracker reported that criminal court backlogs had hit record highs, prisons were operating at 99% capacity, adult social care had "a growing gap between needs and provision," and six of their nine tracked services were performing worse than before the pandemic — which was itself worse than 2010. None of that comes with a number attached. We read that body of evidence and assigned the public services composite a score of 48 out of 100 for that year — roughly "poor but not yet in outright collapse." Someone else could reasonably argue that 38 or 55 would be more accurate. The data doesn't resolve that disagreement; it's a judgment call about how to weight the severity and breadth of failure across different services.</p>
+
+    <p>The shape of the curve — high in 2008–10, steadily declining through austerity, accelerating downward around 2018–20, bottoming out 2023–24 — reflects the broad thrust of the IfG's published analysis, but the specific values at each point are our construction. We flag this prominently because it would be easy to mistake the chart for observed data. It is not. It is an editorial illustration of a real and well-documented trend.</p>
+  </div>
+
+  <h2>The timeline trend lines</h2>
+
+  <p>The small-multiples timeline ("The Shape of Decline") shows each domain from 2008 to 2026. Each panel plots an 18-point trend line with one data point per year.</p>
+
+  <p>Where annual data is available (NHS waiting list, employment rate, house price ratio), the points correspond to real published figures. Where data is published less frequently (wellbeing measures, some education metrics), values are interpolated from the nearest available data points. The lines are illustrative composites — they show the correct direction and approximate magnitude of change, but they are not precise time series you could reproduce from a single dataset.</p>
+
+  <p>Government periods are shown as background shading, with transitions at the date the PM took office. The "peak marker" (gold diamond) shows when each domain last performed at its best within the 2008–2026 window, based on the same data.</p>
+
+  <h2>What this is not</h2>
+
+  <p><strong>It's not an index.</strong> Despite appearances, this is not a formal composite index with published weights, reproducible calculations, and sensitivity analysis. Projects like the <a href="https://www.prosperity.com/">Legatum Prosperity Index</a> or <a href="https://www.socialprogressindex.com/">Social Progress Index</a> do that work rigorously. We are closer to editorial data journalism — using publicly available statistics to support an argued assessment, in the tradition of the Economist's democracy index or the IfG's own tracker.</p>
+
+  <p><strong>It's not neutral.</strong> Choosing nine domains, deciding what counts as "improving," and drawing composite trend lines all involve editorial judgment. We try to be transparent about where judgment is applied, and we link to our sources so anyone can check the underlying data. But this is closer to an op-ed backed by data than a statistical publication.</p>
+
+  <p><strong>It's not real-time.</strong> Dashboards are updated quarterly. The underlying data sources publish on different schedules — some monthly (NHS, employment), some quarterly (GDP, wellbeing), some annually (IfG tracker, education attainment). A quarterly cadence captures meaningful shifts without overfitting to noise.</p>
+
+  <h2>How to challenge this</h2>
+
+  <p>If you disagree with an assessment, we'd welcome the conversation. The most productive challenges tend to come in three forms: "you've picked the wrong metric for this domain" (e.g. you should track median rather than mean earnings); "your status assessment doesn't match what the data actually shows" (e.g. the trend line says declining but the most recent quarter improved); or "you're missing an important domain entirely" (e.g. environment, inequality).</p>
+
+  <p>Every data source is linked from the dashboard footers and from the <a href="/sources/">sources page</a>. The data is public. The methodology is here. The editorial judgments are ours, and we're happy to defend them — or change them when we're wrong.</p>
+
+  <h2>Update schedule</h2>
+
+  <p>Dashboard data is refreshed quarterly, typically in the first two weeks following the end of each calendar quarter. Commentary articles are published ad hoc, usually when a data release or news event illuminates one of the nine domains in a way that warrants analysis. The "last updated" date on each dashboard shows when the most recent refresh occurred.</p>
+
+</div>
+
+<footer>
+  <div class="footer-nav">
+    <a href="/uk/">UK Dashboard</a>
+    <a href="/uk/timeline/">UK Timeline</a>
+    <a href="/sources/">All Sources</a>
+    <a href="/about/">About</a>
+  </div>
+  <div class="footer-fine">
+    <p>UK Reality Check is built and maintained by <a href="/about/">James Webb</a>. Data sourced from the <a href="https://www.ons.gov.uk/">ONS</a>, <a href="https://www.england.nhs.uk/statistics/">NHS England</a>, <a href="https://www.instituteforgovernment.org.uk/">IfG</a>, and other public bodies.</p>
+  </div>
+</footer>
+
+</body>
+</html>

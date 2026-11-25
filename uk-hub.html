@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United Kingdom — Is It Getting Better?</title>
+<meta name="description" content="A data-driven assessment of whether life in Britain is getting better or worse across nine domains: NHS, wages, crime, housing, education, public services, employment, wellbeing, and the economy.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #F7F5F0;
+    --bg-warm: #EFECE4;
+    --surface: #FFFFFF;
+    --text: #1a1c20;
+    --text-secondary: #4a4d55;
+    --text-tertiary: #6e7179;
+    --border: #d8d5cd;
+    --border-light: #e8e5dd;
+    --accent: #2c5ea0;
+    --accent-hover: #1d4b85;
+    --improving: #1a7a4a;
+    --improving-bg: #e8f5ee;
+    --stagnating: #8a6d1b;
+    --stagnating-bg: #fdf5e0;
+    --declining: #b83230;
+    --declining-bg: #fce8e8;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
+  body {
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  .site-name {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    font-size: 0.85rem;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-links .active { color: var(--text); font-weight: 500; }
+
+  /* Hamburger for mobile */
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+    padding: 0.25rem;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 2.5rem 1.25rem 2rem;
+    max-width: 720px;
+  }
+
+  .hero-country {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 2.2rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+  }
+
+  .hero-standfirst {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  /* SCORE STRIP */
+  .score-strip {
+    padding: 0 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .score-strip::-webkit-scrollbar { display: none; }
+
+  .score-pill {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .score-pill.improving { background: var(--improving-bg); color: var(--improving); }
+  .score-pill.stagnating { background: var(--stagnating-bg); color: var(--stagnating); }
+  .score-pill.declining { background: var(--declining-bg); color: var(--declining); }
+
+  .score-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .improving .score-dot { background: var(--improving); }
+  .stagnating .score-dot { background: var(--stagnating); }
+  .declining .score-dot { background: var(--declining); }
+
+  /* DASHBOARD CARDS */
+  .dashboard-cards {
+    padding: 0 1.25rem;
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .dash-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+  }
+
+  .dash-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .dash-card-kicker {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.5rem;
+  }
+
+  .dash-card h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+  }
+
+  .dash-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .dash-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .dash-card-cta svg { transition: transform 0.2s; }
+  .dash-card:hover .dash-card-cta svg { transform: translateX(3px); }
+
+  /* SECTION HEADERS */
+  .section-header {
+    padding: 0 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-header h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .section-header p {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+  }
+
+  /* DOMAIN GRID */
+  .domain-grid {
+    padding: 0 1.25rem;
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+  }
+
+  .domain-card {
+    background: var(--surface);
+    padding: 1.25rem;
+  }
+
+  .domain-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.35rem;
+  }
+
+  .domain-card h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.1rem;
+  }
+
+  .domain-status {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 100px;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+
+  .domain-status.improving { background: var(--improving-bg); color: var(--improving); }
+  .domain-status.stagnating { background: var(--stagnating-bg); color: var(--stagnating); }
+  .domain-status.declining { background: var(--declining-bg); color: var(--declining); }
+
+  .domain-headline {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .domain-context {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* ARTICLES */
+  .articles {
+    padding: 0 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .article-item {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-light);
+    display: block;
+    text-decoration: none;
+    color: var(--text);
+    transition: opacity 0.2s;
+  }
+
+  .article-item:first-child { border-top: 1px solid var(--border-light); }
+  .article-item:hover { opacity: 0.75; }
+
+  .article-meta {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .article-tag {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .article-item h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+  }
+
+  .article-item p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* COMPARE TEASER */
+  .compare-teaser {
+    margin: 0 1.25rem 2.5rem;
+    background: var(--bg-warm);
+    padding: 1.5rem;
+    border: 1px solid var(--border-light);
+  }
+
+  .compare-teaser h2 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .compare-teaser p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+
+  .compare-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-col h4 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-col ul {
+    list-style: none;
+  }
+
+  .footer-col a {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 2;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--text); }
+
+  .footer-fine {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer-fine a { color: var(--accent); text-decoration: none; }
+
+  /* ── RESPONSIVE ── */
+
+  /* Tablet (600px+) */
+  @media (min-width: 600px) {
+    nav { padding: 1rem 2rem; }
+    .hero { padding: 3rem 2rem 2rem; }
+    .hero h1 { font-size: 2.8rem; }
+    .score-strip { padding: 0 2rem; flex-wrap: wrap; overflow-x: visible; }
+    .dashboard-cards { padding: 0 2rem; grid-template-columns: 1fr 1fr; }
+    .section-header { padding: 0 2rem; }
+    .domain-grid { padding: 0; margin-left: 2rem; margin-right: 2rem; grid-template-columns: 1fr 1fr; }
+    .articles { padding: 0 2rem; }
+    .compare-teaser { margin-left: 2rem; margin-right: 2rem; }
+    footer { padding: 2rem 2rem 3rem; }
+    .footer-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* Desktop (900px+) */
+  @media (min-width: 900px) {
+    nav { padding: 1rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .hero { padding: 4rem 3rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+    .hero h1 { font-size: 3.2rem; }
+    .score-strip { padding: 0 3rem; max-width: 1100px; margin: 0 auto 2rem; }
+    .dashboard-cards { padding: 0 3rem; max-width: 1100px; margin: 0 auto 3rem; }
+    .section-header { padding: 0 3rem; max-width: 1100px; margin: 0 auto 1rem; }
+    .domain-grid { margin-left: auto; margin-right: auto; max-width: calc(1100px - 6rem); grid-template-columns: repeat(3, 1fr); margin-bottom: 3rem; }
+    .articles { padding: 0 3rem; max-width: 1100px; margin: 0 auto 3rem; }
+    .article-item { display: grid; grid-template-columns: 200px 1fr; gap: 1.5rem; align-items: start; }
+    .article-body h3 { margin-bottom: 0.25rem; }
+    .compare-teaser { margin-left: auto; margin-right: auto; max-width: calc(1100px - 6rem); }
+    footer { padding: 2rem 3rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .footer-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* Mobile nav */
+  @media (max-width: 599px) {
+    .menu-toggle { display: block; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      flex-direction: column;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      gap: 0.75rem;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="site-name">UK Reality Check</a>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">☰</button>
+  <ul class="nav-links">
+    <li><a href="/uk/" class="active">UK</a></li>
+    <li><a href="/us/">US</a></li>
+    <li><a href="/compare/">Compare</a></li>
+    <li><a href="/methodology/">Methodology</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-country">United Kingdom</div>
+  <h1>Is Britain getting <em>better?</em></h1>
+  <p class="hero-standfirst">Nine domains. Real data. An honest assessment of whether life in the UK is improving, stagnating, or declining — updated quarterly, sourced transparently, open to scrutiny.</p>
+</header>
+
+<!-- Score strip — at-a-glance status -->
+<div class="score-strip">
+  <span class="score-pill declining"><span class="score-dot"></span> NHS</span>
+  <span class="score-pill stagnating"><span class="score-dot"></span> Wages</span>
+  <span class="score-pill improving"><span class="score-dot"></span> Crime</span>
+  <span class="score-pill declining"><span class="score-dot"></span> Housing</span>
+  <span class="score-pill stagnating"><span class="score-dot"></span> Education</span>
+  <span class="score-pill declining"><span class="score-dot"></span> Services</span>
+  <span class="score-pill stagnating"><span class="score-dot"></span> Jobs</span>
+  <span class="score-pill declining"><span class="score-dot"></span> Wellbeing</span>
+  <span class="score-pill stagnating"><span class="score-dot"></span> Economy</span>
+</div>
+
+<!-- Dashboard CTAs -->
+<div class="dashboard-cards">
+  <a href="/uk/dashboard/" class="dash-card">
+    <div class="dash-card-kicker">Interactive dashboard</div>
+    <h2>Is Britain Getting Better?</h2>
+    <p>Radar view across all nine domains with three time horizons. See the overall shape — and where the country is improving versus declining.</p>
+    <span class="dash-card-cta">Explore the dashboard <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m-4-4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </a>
+  <a href="/uk/timeline/" class="dash-card">
+    <div class="dash-card-kicker">Long-term view</div>
+    <h2>The Shape of Decline</h2>
+    <p>How each domain has changed since 2008, government by government. Where the peaks were, what never recovered, and the two-track country that emerged.</p>
+    <span class="dash-card-cta">See the timeline <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m-4-4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </a>
+</div>
+
+<!-- Domain summaries -->
+<div class="section-header">
+  <h2>Domain by domain</h2>
+  <p>Where the country stands right now, based on the most recently available data.</p>
+</div>
+
+<div class="domain-grid">
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Health (NHS)</h3>
+      <span class="domain-status declining">Declining</span>
+    </div>
+    <div class="domain-headline">7.3m on the waiting list</div>
+    <p class="domain-context">Down from the 7.7m peak but still triple the 2012 level. The 18-week standard hasn't been met since 2016. A&E performance remains well below target.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Living Standards</h3>
+      <span class="domain-status stagnating">Stagnating</span>
+    </div>
+    <div class="domain-headline">Real wages barely at 2008 levels</div>
+    <p class="domain-context">Nominal wages growing but real growth has been anaemic. A lost decade and a half, with the 2021–23 inflation shock wiping out years of modest gains.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Safety</h3>
+      <span class="domain-status improving">Improving</span>
+    </div>
+    <div class="domain-headline">Crime at long-run lows</div>
+    <p class="domain-context">The quiet success story. Violent crime and burglary on long-run downward trends. Homicides near multi-decade lows. But fraud has surged and policing is stretched.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Housing</h3>
+      <span class="domain-status declining">Declining</span>
+    </div>
+    <div class="domain-headline">8.2× price-to-earnings ratio</div>
+    <p class="domain-context">The affordability ratio has risen almost continuously. A brief crash-era dip was quickly reversed. Under-35 home ownership has collapsed.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Education</h3>
+      <span class="domain-status stagnating">Stagnating</span>
+    </div>
+    <div class="domain-headline">Disadvantage gap widened post-Covid</div>
+    <p class="domain-context">A decade of genuine progress closing the attainment gap was substantially reversed by the pandemic. London continues to pull ahead of everywhere else.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Public Services</h3>
+      <span class="domain-status declining">Declining</span>
+    </div>
+    <div class="domain-headline">Almost every service worse than 2010</div>
+    <p class="domain-context">Courts, prisons, social care, local government — all in crisis according to the IfG. Most were already declining before the pandemic accelerated the collapse.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Employment</h3>
+      <span class="domain-status stagnating">Stagnating</span>
+    </div>
+    <div class="domain-headline">75.0% employment rate</div>
+    <p class="domain-context">Headline resilience masks rising economic inactivity from long-term sickness — a new structural challenge. More work is precarious or underemployed.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Wellbeing</h3>
+      <span class="domain-status declining">Declining</span>
+    </div>
+    <div class="domain-headline">Self-reported health at record lows</div>
+    <p class="domain-context">Healthy life expectancy at its lowest since records began. Life satisfaction hasn't recovered to pre-pandemic levels. Mental health provision is overwhelmed.</p>
+  </div>
+  <div class="domain-card">
+    <div class="domain-card-header">
+      <h3>Economy</h3>
+      <span class="domain-status stagnating">Stagnating</span>
+    </div>
+    <div class="domain-headline">GDP per head barely above 2008</div>
+    <p class="domain-context">Headline GDP recovered but per-capita growth has been anaemic. Productivity — output per hour — is the UK's defining economic failure, barely growing since the crash.</p>
+  </div>
+</div>
+
+<!-- Commentary articles -->
+<div class="section-header">
+  <h2>Commentary</h2>
+  <p>Connecting the news to the data. Ad-hoc analysis when something shifts.</p>
+</div>
+
+<div class="articles">
+  <a href="/uk/nhs-waiting-list-plateau/" class="article-item">
+    <div class="article-meta">
+      <span class="article-tag" style="color:var(--declining);">Health</span>
+      <span>12 May 2026</span>
+    </div>
+    <div class="article-body">
+      <h3>The waiting list is falling — but what does "falling" actually mean?</h3>
+      <p>A drop from 7.7m to 7.3m sounds like progress. Against a 2012 baseline of 2.5m, it's a rounding error. What the headline numbers don't tell you.</p>
+    </div>
+  </a>
+  <a href="/uk/wages-housing-trap/" class="article-item">
+    <div class="article-meta">
+      <span class="article-tag" style="color:var(--stagnating);">Wages · Housing</span>
+      <span>28 Apr 2026</span>
+    </div>
+    <div class="article-body">
+      <h3>Wages are finally growing — but housing ate the gains</h3>
+      <p>Real wages have just about returned to their 2008 level. Housing costs have risen 40% in the same period. The net effect on disposable income is negative.</p>
+    </div>
+  </a>
+  <a href="/uk/public-services-inheritance/" class="article-item">
+    <div class="article-meta">
+      <span class="article-tag" style="color:var(--declining);">Public Services</span>
+      <span>3 Apr 2026</span>
+    </div>
+    <div class="article-body">
+      <h3>What Starmer actually inherited — and what a year has changed</h3>
+      <p>The IfG Performance Tracker 2025 laid bare the state of every major public service. One year into the new government, we map what's moved and what hasn't.</p>
+    </div>
+  </a>
+</div>
+
+<!-- Compare teaser -->
+<div class="compare-teaser">
+  <h2>How does Britain compare?</h2>
+  <p>The UK dashboard is the first piece of a larger project. Country-by-country comparisons across the world's major economies are coming — starting with the United States.</p>
+  <a href="/compare/" class="compare-link">See all comparisons <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m-4-4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Countries</h4>
+      <ul>
+        <li><a href="/uk/">United Kingdom</a></li>
+        <li><a href="/us/">United States</a></li>
+        <li><a href="/compare/">Compare</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>UK Domains</h4>
+      <ul>
+        <li><a href="/uk/nhs/">Health (NHS)</a></li>
+        <li><a href="/uk/wages/">Living Standards</a></li>
+        <li><a href="/uk/housing/">Housing</a></li>
+        <li><a href="/uk/services/">Public Services</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Dashboards</h4>
+      <ul>
+        <li><a href="/uk/dashboard/">Is Britain Getting Better?</a></li>
+        <li><a href="/uk/timeline/">The Shape of Decline</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="/methodology/">Methodology</a></li>
+        <li><a href="/sources/">Sources</a></li>
+        <li><a href="/about/">About this project</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-fine">
+    <p>Data sourced from the <a href="https://www.ons.gov.uk/">Office for National Statistics</a>, <a href="https://www.england.nhs.uk/statistics/">NHS England</a>, <a href="https://www.instituteforgovernment.org.uk/our-work/trackers/public-services-performance-tracker">Institute for Government</a>, <a href="https://commonslibrary.parliament.uk/">House of Commons Library</a>, and other public bodies. Trend assessments are editorial interpretations of this data — see <a href="/methodology/">methodology</a> for how they're made.</p>
+    <p style="margin-top:0.5rem;">Last updated: Q1 2026. Built by James Webb.</p>
+  </div>
+</footer>
+
+</body>
+</html>
